@@ -2,9 +2,6 @@ package dbm
 
 import (
 	"github.com/goccy/go-reflect"
-
-	"github.com/paulmach/orb"
-	"github.com/paulmach/orb/encoding/wkt"
 )
 
 // DBParam uses reflection to make it easier to interact with a database:
@@ -53,7 +50,7 @@ var DefaultMapper = func(x any) any {
 
 // Params creates a new DBParam pointer
 func Params(x any) *DBParam {
-	d := DBParam{inner: x, colFilters: []func(string) bool{}, mapper: defaultMapper, tag: "db", valFilters: []func(s any) bool{}}
+	d := DBParam{inner: x, colFilters: []func(string) bool{}, mapper: DefaultMapper, tag: "db", valFilters: []func(s any) bool{}}
 	return &d
 }
 

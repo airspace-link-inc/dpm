@@ -12,6 +12,18 @@ type s struct {
 	Unexported float32
 }
 
+
+// Test retrieval of "column names", the tag associated with a struct field
+func TestCols(t *testing.T) {
+	cols := Params(s{Y: 1, Z: "foo"}).Cols()
+
+	validateColumns(
+		t, 
+		[]string{"x", "y", "z"}, 
+		cols,
+	)
+}
+
 // Test omission based on input col name
 func TestOmit(test *testing.T) {
 	testCases := []struct {

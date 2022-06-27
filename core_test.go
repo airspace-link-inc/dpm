@@ -74,3 +74,44 @@ func TestOmit(test *testing.T) {
 		})
 	}	
 }
+
+// Test Use() restricts output to only fields specified in its input params
+func TestUse(test *testing.T) {
+	testCases := []struct {
+		TestName string
+		ExpectedCols []string
+		ExpectedVals []any
+		Use []string
+	}{
+		{
+			"Should only include values of tags passed to the Use() modifier",
+			[]string{"y", "z"},
+			[]any{1, "foo"},
+			[]string{"y", "z"},
+		},
+		{
+			"Should yield no cols nor vals when provided invalid tag",
+			[]string{},
+			[]any{},
+			[]string{"M"},
+		},
+		{
+			"should yield no cols nor vals when provided empty slice",
+			[]string{},
+			[]any{},
+			[]string{},
+		},
+	}
+
+	for _, tc := range testCases {
+		test.Run(tc.TestName, func(t *testing.T) {
+
+			// Only tags specifed in Use() should be returned
+			cols, vals := Params(s{Y: 1, Z: "foo"}).Use(tc.Use...).FlatVals()
+			
+			// Validate output matches expected 
+			validateColumns(test, tc.ExpectedCols, cols)
+			validateValues(test, tc.ExpectedVals, vals)
+		})
+	}
+}

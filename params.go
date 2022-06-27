@@ -50,8 +50,13 @@ var DefaultMapper = func(x any) any {
 
 // Params creates a new DBParam pointer
 func Params(x any) *DBParam {
-	d := DBParam{inner: x, colFilters: []func(string) bool{}, mapper: DefaultMapper, tag: "db", valFilters: []func(s any) bool{}}
-	return &d
+	return &DBParam {
+		inner: x, 
+		colFilters: []func(string) bool{}, 
+		mapper: DefaultMapper, 
+		tag: "db", 
+		valFilters: []func(s any) bool{},
+	}
 }
 
 // Mapper alters the mapping function used by this params struct. This allows you to change the
@@ -82,6 +87,7 @@ func (d *DBParam) Use(fields ...string) *DBParam {
 
 // Omit will exclude the following fields when exporting
 func (d *DBParam) Omit(fields ...string) *DBParam {
+
 	d.colFilters = append(d.colFilters, func(s string) bool {
 		for _, v := range fields {
 			if v == s {
@@ -90,6 +96,7 @@ func (d *DBParam) Omit(fields ...string) *DBParam {
 		}
 		return true
 	})
+
 	return d
 }
 
@@ -130,16 +137,19 @@ func (d *DBParam) FlatVals() ([]string, []any) {
 	n := len(d.extraCols)
 	tags := make([]string, 0, t.NumField()+n)
 	vals := make([]any, 0, t.NumField()+n)
+
+	BaseLoop:
 	for i := 0; i < t.NumField(); i++ {
 		f := t.Field(i)
 		tag := f.Tag.Get(d.tag)
+
 		if tag == "" {
 			continue
 		}
 
 		for _, filter := range d.colFilters {
 			if !filter(tag) {
-				continue
+				continue BaseLoop
 			}
 		}
 
@@ -151,7 +161,7 @@ func (d *DBParam) FlatVals() ([]string, []any) {
 		value := reflectVal.Interface()
 		for _, filter := range d.valFilters {
 			if !filter(value) {
-				continue
+				continue BaseLoop
 			}
 		}
 

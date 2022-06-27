@@ -1,6 +1,9 @@
 package dbm
 
-import "testing"
+import (
+	"reflect"
+	"testing"
+)
 
 // Validates expected and resultant columns match
 // Fails the test with error message if cols do not match
@@ -45,5 +48,30 @@ func validateValues(test *testing.T, expected, result []any) {
 		return
 	}
 
-	// TODO: use reflection to validate values
+	for i := 0; i < num; i++ {
+		current := result[i]
+		exp := expected[i]
+
+		// Unwrap the interface{} to get the underlying value
+		val := reflect.ValueOf(current)
+
+		switch val.Kind() {
+		case reflect.Invalid:
+			// Result is invalid, this should never happen
+			test.Fatalf("Invalid result processed in result %v", current)
+		case reflect.Pointer:
+			// First check if pointer is null
+			// If so we need to reset current to null so it doesnt compare reflect.Value
+			if val.IsNil() {
+				current = nil
+			}
+
+			fallthrough
+
+		default: 
+			if exp != current {
+				test.Fatalf("Expected value %v, does not match recieved %v", exp, current)
+			}
+		}
+	}
 }

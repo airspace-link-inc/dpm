@@ -1,6 +1,7 @@
 package dbm
 
 import (
+	"reflect"
 	"testing"
 )
 
@@ -114,4 +115,47 @@ func TestUse(test *testing.T) {
 			validateValues(test, tc.ExpectedVals, vals)
 		})
 	}
+}
+
+// Test Map(), which when invoked transforms a struct into a map<tag, fieldValue>
+func TestMap(test *testing.T) {
+
+	test.Run("Should generate map from struct when Map() invoked", func(t *testing.T) {
+		expected := [][]any{
+			{"x", nil},
+			{"y", 1},
+			{"z", "foo"},
+		}
+
+		// Only tags specifed in Use() should be returned
+		m := Params(s{Y: 1, Z: "foo"}).Map()
+		
+		for _, pair := range expected {
+			expectedCol := pair[0].(string)
+			expectedVal := pair[1]
+
+			// Search for col name in the strct map
+			actual, exists := m[expectedCol]
+
+			if !exists {
+				t.Errorf("Expected key value pair [%v, %v] not present in output.", expectedCol, expectedVal)
+			}
+
+			// Since the result is of type interface{}, null values need to be treated a bit differently
+			// in order to avoid a panic
+			if expectedVal == nil {
+			
+				if !reflect.ValueOf(actual).IsNil() {
+					t.Errorf("Expected value %v not equal to expected %v", actual, expectedVal)
+				}
+
+				continue
+			}
+			
+			if actual != expectedVal {
+				t.Errorf("Expected value %v not equal to expected %v", actual, expectedVal)
+			}
+		}
+	})
+
 }

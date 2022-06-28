@@ -162,9 +162,6 @@ func TestMap(test *testing.T) {
 // But does not modify the values returned
 func TestTag(test *testing.T) {
 
-	type tnt struct {
-	}
-
 	testCases := []struct {
 		TestName     string
 		ExpectedCols []string

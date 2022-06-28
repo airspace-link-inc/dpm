@@ -50,11 +50,11 @@ var DefaultMapper = func(x any) any {
 
 // Params creates a new DBParam pointer
 func Params(x any) *DBParam {
-	return &DBParam {
-		inner: x, 
-		colFilters: []func(string) bool{}, 
-		mapper: DefaultMapper, 
-		tag: "db", 
+	return &DBParam{
+		inner:      x,
+		colFilters: []func(string) bool{},
+		mapper:     DefaultMapper,
+		tag:        "db",
 		valFilters: []func(s any) bool{},
 	}
 }
@@ -138,7 +138,7 @@ func (d *DBParam) FlatVals() ([]string, []any) {
 	tags := make([]string, 0, t.NumField()+n)
 	vals := make([]any, 0, t.NumField()+n)
 
-	BaseLoop:
+BaseLoop:
 	for i := 0; i < t.NumField(); i++ {
 		f := t.Field(i)
 		tag := f.Tag.Get(d.tag)

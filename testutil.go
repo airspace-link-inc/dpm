@@ -28,7 +28,7 @@ func validateColumns(test *testing.T, expected, result []string) {
 		expectedCol = expected[i]
 
 		if col != expectedCol {
-			test.Errorf("expected column name %v, recieved %v", col,expectedCol)
+			test.Errorf("expected column name %v, recieved %v", col, expectedCol)
 		}
 	}
 }
@@ -68,7 +68,7 @@ func validateValues(test *testing.T, expected, result []any) {
 
 			fallthrough
 
-		default: 
+		default:
 			if exp != current {
 				test.Fatalf("Expected value %v, does not match recieved %v", exp, current)
 			}

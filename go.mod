@@ -1,4 +1,4 @@
-module github.com/AnthonyHewins/dpm
+module github.com/airspace-link-inc/dpm
 
 go 1.18
 
